@@ -1,0 +1,11 @@
+
+sudo systemctl daemon-reload
+
+
+sudo systemctl start stock_service
+
+sudo systemctl enable stock_service
+
+
+
+sudo systemctl status stock_service
