@@ -11,6 +11,7 @@ import java.util.function.Function;
 
 @Component
 public class JwtUtil {
+    
 
     @Value("${jwt.secret}")
     private String secret;
@@ -28,8 +29,17 @@ public class JwtUtil {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+        try {
+            return Jwts.parser()
+                    .setSigningKey(secret)
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (Exception e) {
+            // Handle or log the exception
+            throw new RuntimeException("Invalid JWT token", e);
+        }
     }
+    
 
     public String generateToken(String username) {
         return Jwts.builder()

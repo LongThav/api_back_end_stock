@@ -9,16 +9,18 @@ import org.springframework.stereotype.Service;
 import com.learn.api.dto.RoleDTO;
 import com.learn.api.dto.authDto.UserDTO;
 import com.learn.api.dto.authDto.UserDTORequestCreate;
-import com.learn.api.repositorys.UserRepository;
 import com.learn.api.models.authModel.RoleModel;
+import com.learn.api.models.authModel.TokenBlackListModel;
 import com.learn.api.models.authModel.UserModel;
 import com.learn.api.repositorys.RoleRepository; // Import the RoleRepository
+import com.learn.api.repositorys.authRepository.TokenBlacklistRepository;
+import com.learn.api.repositorys.authRepository.UserRepository;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
-
 
 @Service
 public class authService {
@@ -29,13 +31,14 @@ public class authService {
     private UserRepository userRepository;
 
     @Autowired
+    private TokenBlacklistRepository tokenBlacklistRepository;
+
+    @Autowired
     private RoleRepository roleRepository; // Autowire RoleRepository
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-   
-    
     public UserModel createUserWithRole(@Valid UserDTORequestCreate request) {
 
         if (request.getFName() == null || request.getFName().isEmpty()) {
@@ -50,18 +53,18 @@ public class authService {
         if (request.getEmail() == null || request.getEmail().isEmpty()) {
             throw new IllegalArgumentException("Email is required");
         }
-    
+
         // Check if password is null or empty
         if (request.getPassword() == null || request.getPassword().isEmpty()) {
             throw new IllegalArgumentException("Password is required");
         }
-    
+
         // Check if roleId is null or invalid
         Long roleId = request.getRoleId();
         if (roleId == null || roleId <= 0) {
             throw new IllegalArgumentException("Role ID is required");
         }
-    
+
         // Find the RoleModel by roleId
         RoleModel role = roleRepository.findById(roleId).orElse(null);
         if (role != null) {
@@ -72,7 +75,7 @@ public class authService {
             user.setEmail(request.getEmail());
             user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setRole(role);
-            
+
             logger.debug("UserModel before saving: {}", user);
             return userRepository.save(user);
         } else {
@@ -80,10 +83,6 @@ public class authService {
             return null;
         }
     }
-    
-    
-    
-    
 
     public UserModel findByEmail(String email) {
         return userRepository.findByEmail(email).orElse(null);
@@ -157,8 +156,10 @@ public class authService {
         if (role != null) {
             roleDTO = new RoleDTO(role.getId(), role.getRoleName(), role.getDescriptionRole());
         }
-        // return new UserDTO(user.getUserId(), user.getFName(), user.getLName() ,user.getEmail(), roleDTO);
-        return new UserDTO(user.getUserId(), roleDTO, user.getFName(), user.getLName(), user.getEmail());
+        // return new UserDTO(user.getUserId(), user.getFName(), user.getLName()
+        // ,user.getEmail(), roleDTO);
+        return new UserDTO(user.getUserId(), roleDTO, user.getFName(), user.getLName(), user.getEmail(),
+                user.getImage());
     }
 
     public UserModel updateUserPartial(Long id, UserModel partialUser) {
@@ -175,4 +176,34 @@ public class authService {
             return null;
         }
     }
+
+    public UserDTO getUserByEmail(String email) {
+        UserModel user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            return null; // Handle the case where the user is not found
+        }
+        return convertToDTOProfile(user);
+    }
+
+    private UserDTO convertToDTOProfile(UserModel user) {
+        RoleModel role = user.getRole();
+        RoleDTO roleDTO = null;
+        if (role != null) {
+            // Use the constructor with arguments
+            roleDTO = new RoleDTO(
+                    role.getId(), // Assuming you don't want to include the id
+                    role.getRoleName(),
+                    role.getDescriptionRole());
+        }
+        return new UserDTO(user.getUserId(), roleDTO, user.getFName(), user.getLName(), user.getEmail(),
+                user.getImage());
+    }
+
+    public void blacklistToken(String token) {
+        // Create a new TokenBlackListModel with the token and current date
+        TokenBlackListModel tokenBlackListModel = new TokenBlackListModel(token, Instant.now());
+        // Save the token to the blacklist
+        tokenBlacklistRepository.save(tokenBlackListModel);
+    }
+
 }

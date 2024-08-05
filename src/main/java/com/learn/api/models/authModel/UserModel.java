@@ -28,6 +28,9 @@ public class UserModel {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "image")
+    private String image;
+
     @ManyToOne
     @JoinColumn(name = "role_id")
     private RoleModel role;
@@ -85,6 +88,14 @@ public class UserModel {
         this.role = role;
     }
 
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     @Override
     public String toString() {
         return "UserModel{" +
@@ -92,6 +103,7 @@ public class UserModel {
                 ", fName='" + fName + '\'' +
                 ", lName='" + lName + '\'' +
                 ", email='" + email + '\'' +
+                ", image='" + image + '\'' +
                 ", password='" + password + '\'' +
                 ", role=" + role +
                 '}';

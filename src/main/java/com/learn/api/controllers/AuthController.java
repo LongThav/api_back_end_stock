@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import javax.validation.Valid;
 
 import com.learn.api.models.authModel.UserModel;
+import com.learn.api.service.authService.UserProfileService;
 import com.learn.api.service.authService.authService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -46,6 +47,9 @@ public class AuthController {
     private authService userService;
 
     @Autowired
+    private UserProfileService userProfileService;
+
+    @Autowired
     private JwtUtil jwtUtil;
 
     private boolean isTokenMissing(HttpServletRequest request) {
@@ -53,18 +57,12 @@ public class AuthController {
         return authorizationHeader == null || !authorizationHeader.startsWith("Bearer ");
     }
 
+    @SuppressWarnings("rawtypes")
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, BindingResult result) {
-        // Handle validation errors
-        if (result.hasErrors()) {
-            Map<String, String> errors = new HashMap<>();
-            result.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
-            ResponseWrapper<Map<String, String>> response = new ResponseWrapper<>(
-                    HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                    "Validation failed", errors);
-            return ResponseEntity.unprocessableEntity().body(response);
-        }
-
+    public ResponseEntity<ResponseWrapper<UserDataWithToken>> authenticateUser(
+            @Valid @RequestBody LoginRequest loginRequest) {
+        // No need to manually check if email and password are null or empty, @Valid
+        // will handle this
         try {
             // Find user by email
             UserModel user = userService.findByEmail(loginRequest.getEmail());
@@ -72,7 +70,7 @@ public class AuthController {
                 // Return 404 if user not found
                 logger.info("User not found for email: {}", loginRequest.getEmail());
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ResponseWrapper<>(404, "Email not found", ""));
+                        .body(new ResponseWrapper<>(404, "Email not found", null));
             }
 
             // Authenticate user
@@ -88,27 +86,22 @@ public class AuthController {
             // Create role and user DTOs
             RoleDTO roleDTO = new RoleDTO(user.getRole().getId(), user.getRole().getRoleName(),
                     user.getRole().getDescriptionRole());
-            UserDTO userDTO = new UserDTO(user.getUserId(), roleDTO, user.getFName(), user.getLName(), user.getEmail());
+            UserDTO userDTO = new UserDTO(user.getUserId(), roleDTO, user.getFName(), user.getLName(), user.getEmail(), user.getImage());
 
             // Create user data with token
-            @SuppressWarnings("rawtypes")
             UserDataWithToken userDataWithToken = new UserDataWithToken<>(token, userDTO);
 
             // Return success response
-            return ResponseEntity.ok(new ResponseWrapper<>(200, "Response successfully", userDataWithToken));
-        } catch (UsernameNotFoundException ex) {
-            // Return 404 for invalid email or password
-            logger.error("UsernameNotFoundException: ", ex);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ResponseWrapper<>(404, "Invalid email or password", null));
-        } catch (AuthenticationServiceException ex) {
+            return ResponseEntity.ok(new ResponseWrapper<>(200, "Login successful", userDataWithToken));
+
+        } catch (UsernameNotFoundException | BadCredentialsException ex) {
             // Return 401 for invalid email or password
-            logger.error("AuthenticationServiceException: ", ex);
+            logger.error("Authentication failed: ", ex);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ResponseWrapper<>(401, "Invalid email or password", null));
         } catch (Exception ex) {
             // Log the exception and return 500 for internal server error
-            logger.error("Exception: ", ex);
+            logger.error("Internal server error: ", ex);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ResponseWrapper<>(500, "An error occurred during authentication", null));
         }
@@ -148,7 +141,7 @@ public class AuthController {
                 RoleDTO roleDTO = new RoleDTO(createdUser.getRole().getId(), createdUser.getRole().getRoleName(),
                         createdUser.getRole().getDescriptionRole());
                 UserDTO userDTO = new UserDTO(createdUser.getUserId(), roleDTO, createdUser.getFName(),
-                        createdUser.getLName(), createdUser.getEmail());
+                        createdUser.getLName(), createdUser.getEmail(), createdUser.getImage());
                 ResponseWrapper<UserDTO> response = new ResponseWrapper<>(HttpStatus.CREATED.value(),
                         "User registered successfully", userDTO);
                 return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -167,6 +160,51 @@ public class AuthController {
             ResponseWrapper<String> response = new ResponseWrapper<>(HttpStatus.INTERNAL_SERVER_ERROR.value(),
                     "An unexpected error occurred", "Internal Server Error");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<ResponseWrapper<UserDTO>> getProfile(@RequestHeader("Authorization") String token) {
+        // Remove "Bearer " prefix if present
+        String jwtToken = token.startsWith("Bearer ") ? token.substring(7) : token;
+
+        try {
+            // Get user profile using the token
+            UserDTO userProfile = userProfileService.getUserProfile(jwtToken);
+
+            if (userProfile == null) {
+                // Return 404 if the user profile is not found
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ResponseWrapper<>(404, "User profile not found", null));
+            }
+
+            // Return success response with user profile
+            return ResponseEntity.ok(new ResponseWrapper<>(200, "Profile fetched successfully", userProfile));
+        } catch (Exception e) {
+            // Log and handle the exception
+            e.printStackTrace(); // Make sure to log the exception
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseWrapper<>(500, "An error occurred while fetching the profile", null));
+        }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ResponseWrapper<String>> logout(@RequestHeader("Authorization") String token) {
+        try {
+            // Remove "Bearer " prefix if present
+            String jwtToken = token.startsWith("Bearer ") ? token.substring(7) : token;
+
+            // Call service to blacklist the token
+            // authService.blacklistToken(jwtToken);
+            
+            userService.blacklistToken(jwtToken);
+
+            // Return success response
+            return ResponseEntity.ok(new ResponseWrapper<>(200, "Logout successful", "Token has been blacklisted"));
+        } catch (Exception e) {
+            // Log and handle the exception
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseWrapper<>(500, "An error occurred during logout", null));
         }
     }
 

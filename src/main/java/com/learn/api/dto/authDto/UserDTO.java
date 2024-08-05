@@ -10,18 +10,20 @@ public class UserDTO {
     private String l_name;
 
     private String email;
+    private String image;
 
     // private String password; // Add this field
 
     private RoleDTO role;
 
     // Default constructor
-    public UserDTO(Long userId, RoleDTO roleDTO, String f_name, String l_name, String email) {
+    public UserDTO(Long userId, RoleDTO roleDTO, String f_name, String l_name, String email, String image) {
         this.user_id = userId;
         this.role = roleDTO;
         this.l_name = l_name;
         this.f_name = f_name;
         this.email = email;
+        this.image = image;
     }
 
     // Getters and Setters
@@ -39,6 +41,14 @@ public class UserDTO {
 
     public void setRole(RoleDTO roleDTO) {
         this.role = roleDTO;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String getFName() {

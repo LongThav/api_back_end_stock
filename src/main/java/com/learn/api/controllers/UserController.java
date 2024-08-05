@@ -122,6 +122,6 @@ public class UserController {
             roleDTO = new RoleDTO(role.getId(), role.getRoleName(), role.getDescriptionRole());
         }
         // return new UserDTO(user.getId(), user.getName(), user.getEmail(), roleDTO);
-        return new UserDTO(user.getUserId(), roleDTO, user.getFName(), user.getLName(), user.getEmail());
+        return new UserDTO(user.getUserId(), roleDTO, user.getFName(), user.getLName(), user.getEmail(), user.getImage());
     }
 }

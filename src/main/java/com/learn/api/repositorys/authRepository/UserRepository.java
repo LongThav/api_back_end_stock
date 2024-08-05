@@ -1,4 +1,4 @@
-package com.learn.api.repositorys;
+package com.learn.api.repositorys.authRepository;
 
 import java.util.Optional;
 
