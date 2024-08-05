@@ -11,3 +11,8 @@ class ApiApplicationTests {
 	}
 
 }
+
+
+//connect to server
+//chmod 400 "key.pem"
+//ssh -i "key.pem" ubuntu@ec2-3-25-175-37.ap-southeast-2.compute.amazonaws.com
