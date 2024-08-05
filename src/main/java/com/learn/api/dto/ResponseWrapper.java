@@ -11,7 +11,7 @@ public class ResponseWrapper<T> {
         this.data = data;
     }
 
-    // Getters and setters
+    // Getters and Setters
     public int getStatusCode() {
         return statusCode;
     }
@@ -30,5 +30,9 @@ public class ResponseWrapper<T> {
 
     public T getData() {
         return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
     }
 }

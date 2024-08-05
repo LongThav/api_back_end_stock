@@ -16,11 +16,11 @@ public class UserDTO {
     private RoleDTO role;
 
     // Default constructor
-    public UserDTO(Long userId, RoleDTO roleDTO, String fName, String lName, String email) {
+    public UserDTO(Long userId, RoleDTO roleDTO, String f_name, String l_name, String email) {
         this.user_id = userId;
         this.role = roleDTO;
-        this.l_name = lName;
-        this.f_name = fName;
+        this.l_name = l_name;
+        this.f_name = f_name;
         this.email = email;
     }
 
@@ -45,8 +45,8 @@ public class UserDTO {
         return f_name;
     }
 
-    public void setFName(String fName) {
-        this.f_name = fName;
+    public void setFName(String f_name) {
+        this.f_name = f_name;
     }
 
 
@@ -54,8 +54,8 @@ public class UserDTO {
         return l_name;
     }
 
-    public void setLName(String LName) {
-        this.l_name = LName;
+    public void setLName(String l_name) {
+        this.l_name = l_name;
     }
 
 

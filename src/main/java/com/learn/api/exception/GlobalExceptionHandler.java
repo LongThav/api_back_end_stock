@@ -6,6 +6,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import com.learn.api.dto.ResponseWrapper;
+
 import jakarta.security.enterprise.AuthenticationException;
 
 import java.util.HashMap;
@@ -14,40 +16,49 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<Map<String, Object>> handleAuthenticationException(AuthenticationException ex) {
-        ex.printStackTrace(); // Ensure that exception details are logged
-        Map<String, Object> response = new HashMap<>();
-        response.put("status_code", HttpStatus.UNAUTHORIZED.value());
-        response.put("status", false);
-        response.put("message", "Invalid email or password");
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-    }
+        @ExceptionHandler(AuthenticationException.class)
+        public ResponseEntity<ResponseWrapper<String>> handleAuthenticationException(AuthenticationException ex) {
+                ex.printStackTrace(); // Log the exception details
+                ResponseWrapper<String> response = new ResponseWrapper<>(
+                                HttpStatus.UNAUTHORIZED.value(),
+                                "Invalid email or password",
+                                null);
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getFieldErrors().forEach(error ->
-            errors.put(error.getField(), error.getDefaultMessage()));
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-    }
+        @ExceptionHandler(MethodArgumentNotValidException.class)
+        public ResponseEntity<ResponseWrapper<Map<String, String>>> handleValidationExceptions(
+                        MethodArgumentNotValidException ex) {
+                Map<String, String> errors = new HashMap<>();
+                ex.getBindingResult().getFieldErrors()
+                                .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> handleException(Exception ex) {
-        ex.printStackTrace(); // Ensure that exception details are logged
-        Map<String, Object> response = new HashMap<>();
-        response.put("status_code", HttpStatus.INTERNAL_SERVER_ERROR.value());
-        response.put("status", false);
-        response.put("message", "An error occurred");
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-    }
+                ResponseWrapper<Map<String, String>> response = new ResponseWrapper<>(
+                                HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                                "Validation failed",
+                                errors);
 
-    @ExceptionHandler(UnauthorizedAccessException.class)
-    public ResponseEntity<Map<String, Object>> handleUnauthorizedAccessException(UnauthorizedAccessException ex) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("status_code", HttpStatus.FORBIDDEN.value());
-        response.put("status", false);
-        response.put("message", "User not authorized");
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
-    }
+                return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(response);
+        }
+
+        @ExceptionHandler(Exception.class)
+        public ResponseEntity<ResponseWrapper<String>> handleException(Exception ex) {
+                ex.printStackTrace(); // Log the exception details
+                ResponseWrapper<String> response = new ResponseWrapper<>(
+                                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                                "An unexpected error occurred",
+                                "Internal Server Error");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+
+        @ExceptionHandler(UnauthorizedAccessException.class)
+        public ResponseEntity<ResponseWrapper<String>> handleUnauthorizedAccessException(
+                        UnauthorizedAccessException ex) {
+                ex.printStackTrace(); // Log the exception details
+                ResponseWrapper<String> response = new ResponseWrapper<>(
+                                HttpStatus.FORBIDDEN.value(),
+                                "User not authorized",
+                                null);
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        }
 }

@@ -1,5 +1,6 @@
 package com.learn.api.models.authModel;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,18 +14,22 @@ import jakarta.persistence.Table;
 public class UserModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long user_id;
+    private Long userId;
 
-    private String f_name;
+    @Column(name = "f_name")
+    private String fName;
 
-    private String l_name;
+    @Column(name = "l_name")
+    private String lName;
 
+    @Column(name = "email")
     private String email;
 
-    private String password; // Field for storing hashed password
+    @Column(name = "password")
+    private String password;
 
     @ManyToOne
-    @JoinColumn(name = "role_id") // Foreign key column in tbl_user table
+    @JoinColumn(name = "role_id")
     private RoleModel role;
 
     // Default constructor
@@ -33,27 +38,27 @@ public class UserModel {
 
     // Getters and Setters
     public Long getUserId() {
-        return user_id;
+        return userId;
     }
 
     public void setUserId(Long userId) {
-        this.user_id = userId;
+        this.userId = userId;
     }
 
     public String getFName() {
-        return f_name;
+        return fName;
     }
 
     public void setFName(String fName) {
-        this.f_name = fName;
+        this.fName = fName;
     }
 
     public String getLName() {
-        return l_name;
+        return lName;
     }
 
     public void setLName(String lName) {
-        this.l_name = lName;
+        this.lName = lName;
     }
 
     public String getEmail() {
@@ -83,9 +88,9 @@ public class UserModel {
     @Override
     public String toString() {
         return "UserModel{" +
-                "user_id=" + user_id +
-                ", fName='" + f_name + '\'' +
-                ", lName='" + l_name + '\'' +
+                "userId=" + userId +
+                ", fName='" + fName + '\'' +
+                ", lName='" + lName + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", role=" + role +

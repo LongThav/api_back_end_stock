@@ -17,6 +17,8 @@ import com.learn.api.repositorys.RoleRepository; // Import the RoleRepository
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.validation.Valid;
+
 
 @Service
 public class authService {
@@ -33,24 +35,55 @@ public class authService {
     private PasswordEncoder passwordEncoder;
 
    
-    public UserModel createUserWithRole(UserDTORequestCreate request) {
+    
+    public UserModel createUserWithRole(@Valid UserDTORequestCreate request) {
+
+        if (request.getFName() == null || request.getFName().isEmpty()) {
+            throw new IllegalArgumentException("First Name is required");
+        }
+
+        if (request.getLName() == null || request.getLName().isEmpty()) {
+            throw new IllegalArgumentException("Last Name is required");
+        }
+
+        // Check if email is null or empty
+        if (request.getEmail() == null || request.getEmail().isEmpty()) {
+            throw new IllegalArgumentException("Email is required");
+        }
+    
+        // Check if password is null or empty
+        if (request.getPassword() == null || request.getPassword().isEmpty()) {
+            throw new IllegalArgumentException("Password is required");
+        }
+    
+        // Check if roleId is null or invalid
         Long roleId = request.getRoleId();
+        if (roleId == null || roleId <= 0) {
+            throw new IllegalArgumentException("Role ID is required");
+        }
+    
+        // Find the RoleModel by roleId
         RoleModel role = roleRepository.findById(roleId).orElse(null);
         if (role != null) {
+            // Create and set up UserModel
             UserModel user = new UserModel();
             user.setFName(request.getFName());
             user.setLName(request.getLName());
             user.setEmail(request.getEmail());
-            user.setPassword(passwordEncoder.encode(request.getPassword())); // Hash the password
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setRole(role);
-            logger.info("Creating user with role: {}", user);
+            
+            logger.debug("UserModel before saving: {}", user);
             return userRepository.save(user);
         } else {
             logger.warn("Role not found with id: {}", roleId);
             return null;
         }
     }
-
+    
+    
+    
+    
 
     public UserModel findByEmail(String email) {
         return userRepository.findByEmail(email).orElse(null);

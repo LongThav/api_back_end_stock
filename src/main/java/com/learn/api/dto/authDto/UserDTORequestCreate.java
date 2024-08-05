@@ -1,11 +1,32 @@
 package com.learn.api.dto.authDto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 public class UserDTORequestCreate {
-    private String f_name;
-    private String l_name;
+    @JsonProperty("f_name")
+    @NotBlank(message = "First name is required")
+    private String fName;
+
+    @JsonProperty("l_name")
+    @NotBlank(message = "Last name is required")
+    private String lName;
+
+    @JsonProperty("email")
+    @NotBlank(message = "Email is required")
+    @Email(message = "Invalid email format")
     private String email;
+
+    @JsonProperty("password")
+    @NotBlank(message = "Password is required")
     private String password;
-    private long roleId;
+
+    @JsonProperty("roleId")
+    @NotNull(message = "Role ID is required")
+    private Long roleId;
 
     // Default constructor
     public UserDTORequestCreate() {
@@ -13,19 +34,19 @@ public class UserDTORequestCreate {
 
     // Getters and Setters
     public String getFName() {
-        return f_name;
+        return fName;
     }
 
     public void setFName(String fName) {
-        this.f_name = fName;
+        this.fName = fName;
     }
 
     public String getLName() {
-        return l_name;
+        return lName;
     }
 
     public void setLName(String lName) {
-        this.l_name = lName;
+        this.lName = lName;
     }
 
     public String getEmail() {
@@ -44,11 +65,11 @@ public class UserDTORequestCreate {
         this.password = password;
     }
 
-    public long getRoleId() {
+    public Long getRoleId() {
         return roleId;
     }
 
-    public void setRoleId(long roleId) {
+    public void setRoleId(Long roleId) {
         this.roleId = roleId;
     }
 }
