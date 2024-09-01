@@ -10,8 +10,8 @@ import com.learn.api.dto.RoleDTO;
 import com.learn.api.dto.authDto.AuthRespone;
 import com.learn.api.dto.authDto.UserDTO;
 import com.learn.api.dto.authDto.UserDTORequestCreate;
-import com.learn.api.models.authModel.RoleModel;
-import com.learn.api.models.authModel.UserModel;
+import com.learn.api.models.AuthModel.RoleModel;
+import com.learn.api.models.AuthModel.UserModel;
 import com.learn.api.service.authService.authService;
 
 import jakarta.servlet.http.HttpServletRequest;

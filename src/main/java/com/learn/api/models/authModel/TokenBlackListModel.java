@@ -1,4 +1,4 @@
-package com.learn.api.models.authModel;
+package com.learn.api.models.AuthModel;
 
 import java.time.Instant;
 import jakarta.persistence.Entity;

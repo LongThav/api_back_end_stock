@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.learn.api.models.authModel.UserModel;
+import com.learn.api.models.AuthModel.UserModel;
 
 
 public interface UserRepository extends JpaRepository<UserModel, Long> {

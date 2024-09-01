@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 import com.learn.api.dto.RoleDTO;
 import com.learn.api.dto.authDto.UserDTO;
 import com.learn.api.dto.authDto.UserDTORequestCreate;
-import com.learn.api.models.authModel.RoleModel;
-import com.learn.api.models.authModel.TokenBlackListModel;
-import com.learn.api.models.authModel.UserModel;
+import com.learn.api.models.AuthModel.RoleModel;
+import com.learn.api.models.AuthModel.TokenBlackListModel;
+import com.learn.api.models.AuthModel.UserModel;
 import com.learn.api.repositorys.RoleRepository; // Import the RoleRepository
 import com.learn.api.repositorys.authRepository.TokenBlacklistRepository;
 import com.learn.api.repositorys.authRepository.UserRepository;

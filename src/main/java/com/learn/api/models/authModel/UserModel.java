@@ -1,4 +1,4 @@
-package com.learn.api.models.authModel;
+package com.learn.api.models.AuthModel;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

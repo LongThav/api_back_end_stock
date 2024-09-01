@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 
-import com.learn.api.models.authModel.UserModel;
 import com.learn.api.service.authService.UserProfileService;
 import com.learn.api.service.authService.authService;
 
@@ -34,6 +33,7 @@ import com.learn.api.dto.authDto.UserDTO;
 import com.learn.api.dto.authDto.UserDTORequestCreate;
 import com.learn.api.dto.authDto.UserDataWithToken;
 import com.learn.api.jwt.JwtUtil;
+import com.learn.api.models.AuthModel.UserModel;
 import com.learn.api.dto.ResponseWrapper;
 
 @RestController

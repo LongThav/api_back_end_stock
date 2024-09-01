@@ -36,6 +36,8 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/api/auth/login", "/api/auth/register").permitAll() // Allow public access to login and register endpoints
+                .requestMatchers("/api/items").permitAll() 
+                // .requestMatchers("/api/items").authenticated()
                 .anyRequest().authenticated() // Protect all other endpoints
             )
             .formLogin(form -> form
