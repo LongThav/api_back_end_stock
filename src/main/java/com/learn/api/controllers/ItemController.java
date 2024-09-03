@@ -20,8 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.learn.api.dto.ResponseWrapper;
 import com.learn.api.dto.authDto.AuthRespone;
 import com.learn.api.models.ItemModel.BrandModel;
+import com.learn.api.models.ItemModel.DimensionModel;
 import com.learn.api.models.ItemModel.ItemModel;
 import com.learn.api.models.ItemModel.ManufacturersModel;
+import com.learn.api.models.ItemModel.TypeWeightModel;
 import com.learn.api.models.ItemModel.UnitModel;
 import com.learn.api.service.itemService.ItemService;
 
@@ -76,20 +78,6 @@ public class ItemController {
         return ResponseEntity.ok(results);
     }
 
-    // @GetMapping("/test-items-orm")
-    // public ResponseEntity<List<ItemModel>> testItemsORM() {
-    // List<ItemModel> items = itemService.getAllItems();
-    // System.out.println("Items retrieved from ORM: " + items.size());
-    // return ResponseEntity.ok(items);
-    // }
-
-    // Endpoint to get all items
-    // @GetMapping
-    // public ResponseEntity<List<itemModel>> getAllItemsController() {
-    // List<itemModel> items = itemService.getAllItems();
-    // return ResponseEntity.ok(items);
-    // }
-
     // Endpoint to get an item by its ID
     @GetMapping("/{id}")
     public ResponseEntity<ItemModel> getItemById(@PathVariable("id") Long id) {
@@ -119,10 +107,15 @@ public class ItemController {
         return ResponseEntity.ok(new ResponseWrapper<>(200, "Response manufacturer successfully", manufacturers));
     }
 
-    // public ResponseEntity<List<Map<String, Object>>> getUnit() {
-    // String sql = "SELECT UnitID, Name FROM tbl_Units";
-    // List<Map<String, Object>> results = jdbcTemplate.queryForList(sql);
-    // return ResponseEntity.ok(results);
-    // }
+    @GetMapping("/type-weight")
+    public ResponseEntity<?> typeWeight() {
+        List<TypeWeightModel> typeWeight = itemService.getTypeWeight();
+        return ResponseEntity.ok(new ResponseWrapper<>(200, "Response type weight successfully", typeWeight));
+    }
 
+    @GetMapping("/type-dimentsion")
+    public ResponseEntity<?> typeDimention() {
+        List<DimensionModel> dimensionModels = itemService.getTypeDimension();
+        return ResponseEntity.ok(new ResponseWrapper<>(200, "Response dimension successfully", dimensionModels));
+    }
 }

@@ -8,14 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.learn.api.models.ItemModel.BrandModel;
+import com.learn.api.models.ItemModel.DimensionModel;
 import com.learn.api.models.ItemModel.ItemModel;
 import com.learn.api.models.ItemModel.ManufacturersModel;
 import com.learn.api.models.ItemModel.PreferVendorModel;
+import com.learn.api.models.ItemModel.TypeWeightModel;
 import com.learn.api.models.ItemModel.UnitModel;
 import com.learn.api.repositorys.itemRepository.BrandRepository;
 import com.learn.api.repositorys.itemRepository.ItemRepository;
 import com.learn.api.repositorys.itemRepository.ManufacturerModelRepository;
 import com.learn.api.repositorys.itemRepository.PreferVendorRepository;
+import com.learn.api.repositorys.itemRepository.TypeDimensionRepository;
+import com.learn.api.repositorys.itemRepository.TypeWeightRepository;
 import com.learn.api.repositorys.itemRepository.UnitRepository;
 
 import org.springframework.data.domain.Pageable;
@@ -31,6 +35,12 @@ public class ItemService {
 
     @Autowired
     private BrandRepository brandRepository;
+
+    @Autowired
+    private TypeWeightRepository typeWeightRepository;
+
+    @Autowired
+    private TypeDimensionRepository typeDimensionRepository;
 
     @Autowired
     private ManufacturerModelRepository manufacturerModelRepository;
@@ -68,4 +78,13 @@ public class ItemService {
         return preferVendorModels;
     }
 
+    public List<TypeWeightModel> getTypeWeight() {
+        List<TypeWeightModel> typeWeight = typeWeightRepository.findAll();
+        return typeWeight;
+    }
+
+    public List<DimensionModel> getTypeDimension() {
+        List<DimensionModel> typeDimentsion = typeDimensionRepository.findAll();
+        return typeDimentsion;
+    }
 }
