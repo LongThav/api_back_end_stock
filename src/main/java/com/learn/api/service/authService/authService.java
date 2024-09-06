@@ -12,9 +12,9 @@ import com.learn.api.dto.authDto.UserDTORequestCreate;
 import com.learn.api.models.AuthModel.RoleModel;
 import com.learn.api.models.AuthModel.TokenBlackListModel;
 import com.learn.api.models.AuthModel.UserModel;
-import com.learn.api.repositorys.RoleRepository; // Import the RoleRepository
-import com.learn.api.repositorys.authRepository.TokenBlacklistRepository;
-import com.learn.api.repositorys.authRepository.UserRepository;
+import com.learn.api.repositorys.AuthRepository.TokenBlacklistRepository;
+import com.learn.api.repositorys.AuthRepository.UserRepository;
+import com.learn.api.repositorys.UserManagementRepository.RoleRepository;
 
 import java.time.Instant;
 import java.util.List;

@@ -15,7 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import com.learn.api.exception.UnauthorizedAccessException;
-import com.learn.api.service.CustomUserDetailsService;
+import com.learn.api.service.UserManagementService.CustomUserDetailsService;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
