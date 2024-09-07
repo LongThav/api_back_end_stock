@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.learn.api.dto.RoleDTO;
 import com.learn.api.dto.AuthDto.UserDTO;
 import com.learn.api.dto.AuthDto.UserDTORequestCreate;
+import com.learn.api.dto.RoleDTO.RoleDTO;
 import com.learn.api.models.AuthModel.RoleModel;
 import com.learn.api.models.AuthModel.TokenBlackListModel;
 import com.learn.api.models.AuthModel.UserModel;

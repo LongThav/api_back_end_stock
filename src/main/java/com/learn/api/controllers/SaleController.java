@@ -10,11 +10,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.learn.api.dto.ResponseWrapper;
 import com.learn.api.dto.AuthDto.AuthRespone;
-import com.learn.api.dto.CustomerDTO.ContactPersonDTO;
-import com.learn.api.dto.CustomerDTO.CustomerDTO;
+import com.learn.api.dto.SaleDTO.CustomerDTO;
+import com.learn.api.dto.SaleDTO.ReportDTO;
 import com.learn.api.models.SaleModel.AddressModel;
 import com.learn.api.models.SaleModel.ContactPersonModel;
 import com.learn.api.models.SaleModel.CustomerModel;
+import com.learn.api.models.SaleModel.ReportModel;
 import com.learn.api.service.SaleService.CustomerService;
 
 // import org.slf4j.Logger;
@@ -29,6 +30,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -77,7 +81,6 @@ public class SaleController {
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<?> getCustomerById(@PathVariable(value = "customerId") Long customerId) {
         CustomerModel customer = customerService.getCustomerById(customerId);
-
         if (customer == null) { // Check if customer is null
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseWrapper<>(404, "Customer not found", null));
@@ -156,26 +159,74 @@ public class SaleController {
         return ResponseEntity.ok(new ResponseWrapper<>(200, "Response contact successfully", contact));
     }
 
-    @PostMapping("/customer/add-contact")
-    public ResponseEntity<ContactPersonDTO> createContactPerson(@RequestBody ContactPersonModel contactPersonModel) {
-        ContactPersonModel createdContactPerson = customerService.addContact(contactPersonModel);
+    @PostMapping("/customer/{customerId}/add-contact")
+    public ResponseEntity<?> createContactPerson(
+            @PathVariable(value = "customerId") Long customerId,
+            @Valid @RequestBody ContactPersonModel contactPersonModel) {
 
-        // Map the model to the DTO
-        ContactPersonDTO contactPersonDTO = new ContactPersonDTO();
-        contactPersonDTO.setContactPersonId(createdContactPerson.getContactPersonId());
+        // Add the contact person to the customer
+        CustomerModel updatedCustomer = customerService.addContact(customerId, contactPersonModel);
 
-        CustomerDTO customerDTO = new CustomerDTO();
-        customerDTO.setCustomerId(createdContactPerson.getCustomer().getCustomerId());
-        contactPersonDTO.setCustomer(customerDTO);
+        // Create a response object with customerId and contact person details
+        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> customerResponse = new HashMap<>();
+        customerResponse.put("customerId", updatedCustomer.getCustomerId());
 
-        contactPersonDTO.setSalutation(createdContactPerson.getSalutation());
-        contactPersonDTO.setFirstName(createdContactPerson.getFirstName());
-        contactPersonDTO.setLastName(createdContactPerson.getLastName());
-        contactPersonDTO.setEmailAddress(createdContactPerson.getEmailAddress());
-        contactPersonDTO.setWorkPhone(createdContactPerson.getWorkPhone());
-        contactPersonDTO.setMobilePhone(createdContactPerson.getMobilePhone());
+        // Include contact person details in the response
+        response.put("customer", customerResponse);
+        response.put("salutation", contactPersonModel.getSalutation());
+        response.put("firstName", contactPersonModel.getFirstName());
+        response.put("lastName", contactPersonModel.getLastName());
+        response.put("emailAddress", contactPersonModel.getEmailAddress());
+        response.put("workPhone", contactPersonModel.getWorkPhone());
+        response.put("mobilePhone", contactPersonModel.getMobilePhone());
+        response.put("message", "Contact person added successfully");
 
-        return ResponseEntity.ok(contactPersonDTO);
+        return ResponseEntity.ok(new ResponseWrapper<>(200, "Response contact successfully", response));
     }
 
+    @GetMapping("/report")
+    public ResponseEntity<?> getAllReport(
+            HttpServletRequest httpRequest,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        // Check if the token is missing
+        if (isTokenMissing(httpRequest)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthRespone(false, "User not authorized"));
+        }
+        // Create a Pageable object
+        Pageable pageable = PageRequest.of(page, size);
+        // Retrieve a paginated list of items
+        Page<ReportDTO> report = customerService.getAllReport(pageable);
+        // Check if there are no items on the requested page
+        if (report.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseWrapper<>(404, "No report found", report));
+        }
+        // Return the paginated response
+        return ResponseEntity.ok(new ResponseWrapper<>(200, "Response report successfully", report));
+    }
+
+    @PostMapping("/customer/{customerId}/add-report")
+    public ResponseEntity<?> addReportToCustomer(
+            @PathVariable(value = "customerId") Long customerId,
+            @Valid @RequestBody ReportModel reportModel) {
+
+        // Add the report to the customer
+        ReportModel report = customerService.addReportToCustomer(customerId, reportModel);
+
+        if (report == null) {
+            return ResponseEntity.badRequest().body(new ResponseWrapper<>(400, "Customer not found", null));
+        }
+
+        ReportDTO reportDTO = new ReportDTO();
+
+        reportDTO.setCustomerId(customerId);
+        reportDTO.setReportId(reportModel.getReportId());
+        reportDTO.setCupiditate(reportModel.getCupiditate());
+        reportDTO.setFuga(reportModel.getFuga());
+
+        return ResponseEntity.ok(new ResponseWrapper<>(200, "Report added successfully", reportDTO));
+    }
 }

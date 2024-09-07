@@ -1,10 +1,14 @@
-package com.learn.api.dto.CustomerDTO;
+package com.learn.api.dto.SaleDTO;
+
+import java.util.Set;
+
+import com.learn.api.models.SaleModel.ContactPersonModel;
 
 public class ContactPersonDTO {
 
     private Integer contactPersonId;
 
-    private CustomerDTO customer;
+    private Long customerId;
 
     private String salutation;
 
@@ -18,6 +22,16 @@ public class ContactPersonDTO {
 
     private String mobilePhone;
 
+    private Set<ContactPersonModel> contactPersonModels;
+
+    public Set<ContactPersonModel> getContact() {
+        return contactPersonModels;
+    }
+
+    public void setContact(Set<ContactPersonModel> contactPersonModels) {
+        this.contactPersonModels = contactPersonModels;
+    }
+
     // Getters and Setters
 
     public Integer getContactPersonId() {
@@ -28,12 +42,12 @@ public class ContactPersonDTO {
         this.contactPersonId = contactPersonId;
     }
 
-    public CustomerDTO getCustomer() {
-        return customer;
+    public Long getCustomer() {
+        return customerId;
     }
 
-    public void setCustomer(CustomerDTO customer) {
-        this.customer = customer;
+    public void setCustomer(CustomerDTO customerId) {
+        this.customerId = customerId.getCustomerId();
     }
 
     public String getSalutation() {

@@ -6,10 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.learn.api.dto.ResponseWrapper;
-import com.learn.api.dto.RoleDTO;
 import com.learn.api.dto.AuthDto.AuthRespone;
 import com.learn.api.dto.AuthDto.UserDTO;
 import com.learn.api.dto.AuthDto.UserDTORequestCreate;
+import com.learn.api.dto.RoleDTO.RoleDTO;
 import com.learn.api.models.AuthModel.RoleModel;
 import com.learn.api.models.AuthModel.UserModel;
 import com.learn.api.service.AuthService.authService;

@@ -1,4 +1,4 @@
-package com.learn.api.dto.CustomerDTO;
+package com.learn.api.dto.SaleDTO;
 
 public class CustomerDTO {
 

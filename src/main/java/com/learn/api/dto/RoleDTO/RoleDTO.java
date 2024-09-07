@@ -1,4 +1,4 @@
-package com.learn.api.dto;
+package com.learn.api.dto.RoleDTO;
 
 public class RoleDTO {
     private Long role_id;

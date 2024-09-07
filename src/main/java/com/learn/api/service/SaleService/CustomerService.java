@@ -10,13 +10,16 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.learn.api.dto.CustomerDTO.CustomerDTO;
+import com.learn.api.dto.SaleDTO.CustomerDTO;
+import com.learn.api.dto.SaleDTO.ReportDTO;
 import com.learn.api.models.SaleModel.AddressModel;
 import com.learn.api.models.SaleModel.ContactPersonModel;
 import com.learn.api.models.SaleModel.CustomerModel;
+import com.learn.api.models.SaleModel.ReportModel;
 import com.learn.api.repositorys.SaleRepository.AddressRepository;
 import com.learn.api.repositorys.SaleRepository.ContactPersonRepository;
 import com.learn.api.repositorys.SaleRepository.CustomerRepository;
+import com.learn.api.repositorys.SaleRepository.ReportRepository;
 
 import jakarta.transaction.Transactional;
 
@@ -29,6 +32,9 @@ public class CustomerService {
     private AddressRepository addressRepository;
 
     @Autowired
+    private ReportRepository reportRepository;
+
+    @Autowired
     private ContactPersonRepository contactPersonRepository;
 
     public Page<CustomerDTO> getAllCustomer(Pageable pageable) {
@@ -36,7 +42,7 @@ public class CustomerService {
 
         // Convert the CustomerModel to CustomerDTO
         List<CustomerDTO> customerDTOList = customerPage.stream()
-                .map(this::convertToDTO)
+                .map(this::convertCustomerToDTO)
                 .collect(Collectors.toList());
 
         return new PageImpl<>(customerDTOList, pageable, customerPage.getTotalElements());
@@ -79,11 +85,48 @@ public class CustomerService {
         return address;
     }
 
-    public ContactPersonModel addContact(ContactPersonModel contactPerson) {
-        return contactPersonRepository.save(contactPerson);
+    @Transactional
+    public CustomerModel addContact(Long customerId, ContactPersonModel contactPerson) {
+        CustomerModel customer = customerRepository.findById(customerId).orElse(null);
+
+        if (customer == null) {
+            return null;
+        }
+
+        contactPerson.setCustomer(customer); // Set the customer on the address
+        customer.getContact().add(contactPerson); // Add the new address to the customer's addresses
+
+        customerRepository.save(customer); // Save the updated customer
+        return customer;
     }
 
-    private CustomerDTO convertToDTO(CustomerModel customerModel) {
+    public Page<ReportDTO> getAllReport(Pageable pageable) {
+        Page<ReportModel> reportPage = reportRepository.findAll(pageable);
+
+        // Convert the CustomerModel to CustomerDTO
+        List<ReportDTO> reportDTO = reportPage.stream()
+                .map(this::convertReportToDTO)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(reportDTO, pageable, reportPage.getTotalElements());
+    }
+
+    @Transactional
+    public ReportModel  addReportToCustomer(Long customerId, ReportModel reportModel) {
+        CustomerModel customer = customerRepository.findById(customerId).orElse(null);
+
+        if (customer == null) {
+            return null;
+        }
+
+        reportModel.setCustomer(customer); // Set the customer on the address
+        customer.getReport().add(reportModel); // Add the new address to the customer's addresses
+
+        ReportModel savedReport = reportRepository.save(reportModel); 
+        return savedReport;
+    }
+
+    private CustomerDTO convertCustomerToDTO(CustomerModel customerModel) {
         CustomerDTO dto = new CustomerDTO();
         dto.setCustomerId(customerModel.getCustomerId());
         dto.setCustomerType(customerModel.getCustomerType());
@@ -95,6 +138,15 @@ public class CustomerService {
         dto.setCustomerPhone(customerModel.getCustomerPhone());
         dto.setWorkPhone(customerModel.getWorkPhone());
         dto.setMobilePhone(customerModel.getMobilePhone());
+        return dto;
+    }
+
+    private ReportDTO convertReportToDTO(ReportModel reportModel) {
+        ReportDTO dto = new ReportDTO();
+        dto.setReportId(reportModel.getReportId());
+        // dto.setCustomerId(reportModel.getCustomer().getCustomerId());
+        dto.setCupiditate(reportModel.getCupiditate());
+        dto.setFuga(reportModel.getFuga());
         return dto;
     }
 }

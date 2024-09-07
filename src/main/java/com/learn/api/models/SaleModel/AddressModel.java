@@ -1,11 +1,10 @@
 package com.learn.api.models.SaleModel;
 
+import com.learn.api.constants.Enum.SaleEnum.AddressTypeEnum;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-
-// import jakarta.validation.constraints.NotNull;
-import com.learn.api.constant.Enum.SaleEnum.AddressTypeEnum;
 
 @Entity
 @Table(name = "tbl_address")
@@ -82,9 +81,9 @@ public class AddressModel {
         this.addressId = addressId;
     }
 
-    // public CustomerModel getCustomer() {
-    // return customer;
-    // }
+    public CustomerModel getCustomer() {
+    return customer;
+    }
 
     public void setCustomer(CustomerModel customer) {
         this.customer = customer;

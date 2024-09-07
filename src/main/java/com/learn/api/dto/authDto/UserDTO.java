@@ -1,6 +1,6 @@
 package com.learn.api.dto.AuthDto;
 
-import com.learn.api.dto.RoleDTO;
+import com.learn.api.dto.RoleDTO.RoleDTO;
 
 public class UserDTO {
     private Long user_id;

@@ -1,4 +1,4 @@
-package com.learn.api.constant.Enum.SaleEnum;
+package com.learn.api.constants.Enum.SaleEnum;
 
 public enum AddressTypeEnum {
     Billing,

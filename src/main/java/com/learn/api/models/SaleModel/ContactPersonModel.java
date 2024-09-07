@@ -15,12 +15,16 @@ public class ContactPersonModel {
     @Column(name = "contact_person_id")
     private Integer contactPersonId;
 
+    
+   
+    @NotNull(message = "Customer id is required")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id", nullable = false)
     @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+    @JoinColumn(name = "customer_id", nullable = false)
     private CustomerModel customer;
 
     @Size(max = 10)
+    @NotNull(message = "Salutation is required")
     @Column(name = "salutation")
     private String salutation;
 
@@ -49,6 +53,7 @@ public class ContactPersonModel {
     private String workPhone;
 
     @Size(max = 50)
+    @NotNull(message = "Mobile phone is required")
     @Column(name = "mobile_phone")
     private String mobilePhone;
 
@@ -62,9 +67,9 @@ public class ContactPersonModel {
         this.contactPersonId = contactPersonId;
     }
 
-    public CustomerModel getCustomer() {
-        return customer;
-    }
+    // public CustomerModel getCustomer() {
+    //     return customer;
+    // }
 
     public void setCustomer(CustomerModel customer) {
         this.customer = customer;
