@@ -1,4 +1,4 @@
-package com.learn.api.service.authService;
+package com.learn.api.service.AuthService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,8 +7,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.learn.api.dto.RoleDTO;
-import com.learn.api.dto.authDto.UserDTO;
-import com.learn.api.dto.authDto.UserDTORequestCreate;
+import com.learn.api.dto.AuthDto.UserDTO;
+import com.learn.api.dto.AuthDto.UserDTORequestCreate;
 import com.learn.api.models.AuthModel.RoleModel;
 import com.learn.api.models.AuthModel.TokenBlackListModel;
 import com.learn.api.models.AuthModel.UserModel;

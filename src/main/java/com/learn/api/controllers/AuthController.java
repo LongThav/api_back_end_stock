@@ -21,19 +21,18 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 
-import com.learn.api.service.authService.UserProfileService;
-import com.learn.api.service.authService.authService;
-
 import jakarta.servlet.http.HttpServletRequest;
 
 import com.learn.api.dto.RoleDTO;
-import com.learn.api.dto.authDto.AuthRespone;
-import com.learn.api.dto.authDto.LoginRequest;
-import com.learn.api.dto.authDto.UserDTO;
-import com.learn.api.dto.authDto.UserDTORequestCreate;
-import com.learn.api.dto.authDto.UserDataWithToken;
+import com.learn.api.dto.AuthDto.AuthRespone;
+import com.learn.api.dto.AuthDto.LoginRequest;
+import com.learn.api.dto.AuthDto.UserDTO;
+import com.learn.api.dto.AuthDto.UserDTORequestCreate;
+import com.learn.api.dto.AuthDto.UserDataWithToken;
 import com.learn.api.jwt.JwtUtil;
 import com.learn.api.models.AuthModel.UserModel;
+import com.learn.api.service.AuthService.UserProfileService;
+import com.learn.api.service.AuthService.authService;
 import com.learn.api.dto.ResponseWrapper;
 
 @RestController

@@ -1,14 +1,21 @@
 package com.learn.api.service.SaleService;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 // import org.hibernate.query.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.learn.api.dto.CustomerDTO.CustomerDTO;
 import com.learn.api.models.SaleModel.AddressModel;
+import com.learn.api.models.SaleModel.ContactPersonModel;
 import com.learn.api.models.SaleModel.CustomerModel;
 import com.learn.api.repositorys.SaleRepository.AddressRepository;
+import com.learn.api.repositorys.SaleRepository.ContactPersonRepository;
 import com.learn.api.repositorys.SaleRepository.CustomerRepository;
 
 import jakarta.transaction.Transactional;
@@ -21,9 +28,18 @@ public class CustomerService {
     @Autowired
     private AddressRepository addressRepository;
 
-    public Page<CustomerModel> getAllCustomer(Pageable pageable) {
-        Page<CustomerModel> customer = customerRepository.findAll(pageable);
-        return customer;
+    @Autowired
+    private ContactPersonRepository contactPersonRepository;
+
+    public Page<CustomerDTO> getAllCustomer(Pageable pageable) {
+        Page<CustomerModel> customerPage = customerRepository.findAll(pageable);
+
+        // Convert the CustomerModel to CustomerDTO
+        List<CustomerDTO> customerDTOList = customerPage.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(customerDTOList, pageable, customerPage.getTotalElements());
     }
 
     public CustomerModel getCustomerById(Long customerId) {
@@ -56,5 +72,29 @@ public class CustomerService {
 
         customerRepository.save(customer); // Save the updated customer
         return customer;
+    }
+
+    public Page<ContactPersonModel> getAllContactPerson(Pageable pageable) {
+        Page<ContactPersonModel> address = contactPersonRepository.findAll(pageable);
+        return address;
+    }
+
+    public ContactPersonModel addContact(ContactPersonModel contactPerson) {
+        return contactPersonRepository.save(contactPerson);
+    }
+
+    private CustomerDTO convertToDTO(CustomerModel customerModel) {
+        CustomerDTO dto = new CustomerDTO();
+        dto.setCustomerId(customerModel.getCustomerId());
+        dto.setCustomerType(customerModel.getCustomerType());
+        dto.setSalutation(customerModel.getSalutation());
+        dto.setFirstName(customerModel.getFirstName());
+        dto.setLastName(customerModel.getLastName());
+        dto.setCompanyName(customerModel.getCompanyName());
+        dto.setCustomerEmail(customerModel.getCustomerEmail());
+        dto.setCustomerPhone(customerModel.getCustomerPhone());
+        dto.setWorkPhone(customerModel.getWorkPhone());
+        dto.setMobilePhone(customerModel.getMobilePhone());
+        return dto;
     }
 }

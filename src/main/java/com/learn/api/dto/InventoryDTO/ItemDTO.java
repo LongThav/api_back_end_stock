@@ -1,4 +1,4 @@
-package com.learn.api.dto.itemDto;
+package com.learn.api.dto.InventoryDTO;
 
 public class ItemDTO {
     private Long itemID;

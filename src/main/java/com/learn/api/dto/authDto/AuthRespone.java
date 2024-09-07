@@ -1,4 +1,4 @@
-package com.learn.api.dto.authDto;
+package com.learn.api.dto.AuthDto;
 
 public class AuthRespone {
     private boolean status;

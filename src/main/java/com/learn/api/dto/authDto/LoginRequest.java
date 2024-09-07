@@ -1,4 +1,4 @@
-package com.learn.api.dto.authDto;
+package com.learn.api.dto.AuthDto;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;

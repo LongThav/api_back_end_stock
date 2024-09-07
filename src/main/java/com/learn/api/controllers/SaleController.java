@@ -9,8 +9,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.learn.api.dto.ResponseWrapper;
-import com.learn.api.dto.authDto.AuthRespone;
+import com.learn.api.dto.AuthDto.AuthRespone;
+import com.learn.api.dto.CustomerDTO.ContactPersonDTO;
+import com.learn.api.dto.CustomerDTO.CustomerDTO;
 import com.learn.api.models.SaleModel.AddressModel;
+import com.learn.api.models.SaleModel.ContactPersonModel;
 import com.learn.api.models.SaleModel.CustomerModel;
 import com.learn.api.service.SaleService.CustomerService;
 
@@ -59,7 +62,9 @@ public class SaleController {
         // Create a Pageable object
         Pageable pageable = PageRequest.of(page, size);
         // Retrieve a paginated list of items
-        Page<CustomerModel> customer = customerService.getAllCustomer(pageable);
+
+        // Retrieve a paginated list of CustomerDTO
+        Page<CustomerDTO> customer = customerService.getAllCustomer(pageable);
         // Check if there are no items on the requested page
         if (customer.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -126,6 +131,51 @@ public class SaleController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 new ResponseWrapper<>(HttpStatus.CREATED.value(), "Customer created successfully", updatedCustomer));
+    }
+
+    @GetMapping("/contact")
+    public ResponseEntity<?> getAllcontact(
+            HttpServletRequest httpRequest,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        // Check if the token is missing
+        if (isTokenMissing(httpRequest)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthRespone(false, "User not authorized"));
+        }
+        // Create a Pageable object
+        Pageable pageable = PageRequest.of(page, size);
+        // Retrieve a paginated list of items
+        Page<ContactPersonModel> contact = customerService.getAllContactPerson(pageable);
+        // Check if there are no items on the requested page
+        if (contact.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseWrapper<>(404, "No contact found", contact));
+        }
+        // Return the paginated response
+        return ResponseEntity.ok(new ResponseWrapper<>(200, "Response contact successfully", contact));
+    }
+
+    @PostMapping("/customer/add-contact")
+    public ResponseEntity<ContactPersonDTO> createContactPerson(@RequestBody ContactPersonModel contactPersonModel) {
+        ContactPersonModel createdContactPerson = customerService.addContact(contactPersonModel);
+
+        // Map the model to the DTO
+        ContactPersonDTO contactPersonDTO = new ContactPersonDTO();
+        contactPersonDTO.setContactPersonId(createdContactPerson.getContactPersonId());
+
+        CustomerDTO customerDTO = new CustomerDTO();
+        customerDTO.setCustomerId(createdContactPerson.getCustomer().getCustomerId());
+        contactPersonDTO.setCustomer(customerDTO);
+
+        contactPersonDTO.setSalutation(createdContactPerson.getSalutation());
+        contactPersonDTO.setFirstName(createdContactPerson.getFirstName());
+        contactPersonDTO.setLastName(createdContactPerson.getLastName());
+        contactPersonDTO.setEmailAddress(createdContactPerson.getEmailAddress());
+        contactPersonDTO.setWorkPhone(createdContactPerson.getWorkPhone());
+        contactPersonDTO.setMobilePhone(createdContactPerson.getMobilePhone());
+
+        return ResponseEntity.ok(contactPersonDTO);
     }
 
 }

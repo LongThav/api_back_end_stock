@@ -1,4 +1,4 @@
-package com.learn.api.dto.authDto;
+package com.learn.api.dto.AuthDto;
 
 import com.learn.api.dto.RoleDTO;
 

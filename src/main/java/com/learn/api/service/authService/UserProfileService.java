@@ -1,9 +1,9 @@
-package com.learn.api.service.authService;
+package com.learn.api.service.AuthService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.learn.api.dto.authDto.UserDTO;
+import com.learn.api.dto.AuthDto.UserDTO;
 import com.learn.api.jwt.JwtUtil;
 
 @Service

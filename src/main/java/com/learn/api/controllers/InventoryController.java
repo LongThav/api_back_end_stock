@@ -18,7 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.learn.api.dto.ResponseWrapper;
-import com.learn.api.dto.authDto.AuthRespone;
+import com.learn.api.dto.AuthDto.AuthRespone;
 import com.learn.api.models.InventoryModel.BrandModel;
 import com.learn.api.models.InventoryModel.DimensionModel;
 import com.learn.api.models.InventoryModel.ItemModel;
