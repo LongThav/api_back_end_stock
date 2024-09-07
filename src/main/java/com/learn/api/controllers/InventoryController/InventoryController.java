@@ -1,4 +1,4 @@
-package com.learn.api.controllers;
+package com.learn.api.controllers.InventoryController;
 
 import java.util.List;
 import java.util.Map;

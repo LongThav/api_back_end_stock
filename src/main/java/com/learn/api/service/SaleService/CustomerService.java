@@ -11,15 +11,24 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.learn.api.dto.SaleDTO.CustomerDTO;
+import com.learn.api.dto.SaleDTO.OrderDetailDTO;
+import com.learn.api.dto.SaleDTO.RemarkDTO;
 import com.learn.api.dto.SaleDTO.ReportDTO;
 import com.learn.api.models.SaleModel.AddressModel;
 import com.learn.api.models.SaleModel.ContactPersonModel;
 import com.learn.api.models.SaleModel.CustomerModel;
+import com.learn.api.models.SaleModel.OrderDetailModel;
+import com.learn.api.models.SaleModel.RemarkModel;
 import com.learn.api.models.SaleModel.ReportModel;
 import com.learn.api.repositorys.SaleRepository.AddressRepository;
 import com.learn.api.repositorys.SaleRepository.ContactPersonRepository;
 import com.learn.api.repositorys.SaleRepository.CustomerRepository;
+import com.learn.api.repositorys.SaleRepository.OrderDetailRepository;
+import com.learn.api.repositorys.SaleRepository.RemarkRepository;
 import com.learn.api.repositorys.SaleRepository.ReportRepository;
+import com.learn.api.utility.Mapper.SaleMapper.CustomerMapper;
+import com.learn.api.utility.Mapper.SaleMapper.OrderDetailMapper;
+import com.learn.api.utility.Mapper.SaleMapper.RemarkMapper;
 
 import jakarta.transaction.Transactional;
 
@@ -35,14 +44,20 @@ public class CustomerService {
     private ReportRepository reportRepository;
 
     @Autowired
+    private RemarkRepository remarkRepository;
+
+    @Autowired
     private ContactPersonRepository contactPersonRepository;
+
+    @Autowired
+    private OrderDetailRepository orderDetailRepository;
 
     public Page<CustomerDTO> getAllCustomer(Pageable pageable) {
         Page<CustomerModel> customerPage = customerRepository.findAll(pageable);
 
         // Convert the CustomerModel to CustomerDTO
         List<CustomerDTO> customerDTOList = customerPage.stream()
-                .map(this::convertCustomerToDTO)
+                .map(CustomerMapper::convertCustomerToDTO)
                 .collect(Collectors.toList());
 
         return new PageImpl<>(customerDTOList, pageable, customerPage.getTotalElements());
@@ -105,14 +120,14 @@ public class CustomerService {
 
         // Convert the CustomerModel to CustomerDTO
         List<ReportDTO> reportDTO = reportPage.stream()
-                .map(this::convertReportToDTO)
+                .map(CustomerMapper::convertReportToDTO)
                 .collect(Collectors.toList());
 
         return new PageImpl<>(reportDTO, pageable, reportPage.getTotalElements());
     }
 
     @Transactional
-    public ReportModel  addReportToCustomer(Long customerId, ReportModel reportModel) {
+    public ReportModel addReportToCustomer(Long customerId, ReportModel reportModel) {
         CustomerModel customer = customerRepository.findById(customerId).orElse(null);
 
         if (customer == null) {
@@ -122,31 +137,41 @@ public class CustomerService {
         reportModel.setCustomer(customer); // Set the customer on the address
         customer.getReport().add(reportModel); // Add the new address to the customer's addresses
 
-        ReportModel savedReport = reportRepository.save(reportModel); 
+        ReportModel savedReport = reportRepository.save(reportModel);
         return savedReport;
     }
 
-    private CustomerDTO convertCustomerToDTO(CustomerModel customerModel) {
-        CustomerDTO dto = new CustomerDTO();
-        dto.setCustomerId(customerModel.getCustomerId());
-        dto.setCustomerType(customerModel.getCustomerType());
-        dto.setSalutation(customerModel.getSalutation());
-        dto.setFirstName(customerModel.getFirstName());
-        dto.setLastName(customerModel.getLastName());
-        dto.setCompanyName(customerModel.getCompanyName());
-        dto.setCustomerEmail(customerModel.getCustomerEmail());
-        dto.setCustomerPhone(customerModel.getCustomerPhone());
-        dto.setWorkPhone(customerModel.getWorkPhone());
-        dto.setMobilePhone(customerModel.getMobilePhone());
-        return dto;
+    // remakr
+    public Page<RemarkDTO> getAllRemark(Pageable pageable) {
+        Page<RemarkModel> remark = remarkRepository.findAll(pageable);
+        List<RemarkDTO> remarkDTOList = remark.stream()
+                .map(RemarkMapper::toDto)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(remarkDTOList, pageable, remark.getTotalElements());
     }
 
-    private ReportDTO convertReportToDTO(ReportModel reportModel) {
-        ReportDTO dto = new ReportDTO();
-        dto.setReportId(reportModel.getReportId());
-        // dto.setCustomerId(reportModel.getCustomer().getCustomerId());
-        dto.setCupiditate(reportModel.getCupiditate());
-        dto.setFuga(reportModel.getFuga());
-        return dto;
+    @Transactional
+    public RemarkModel addRemarkToCustomer(Long customerId, RemarkModel remarkModel) {
+        CustomerModel customer = customerRepository.findById(customerId).orElse(null);
+
+        if (customer == null) {
+            return null;
+        }
+
+        remarkModel.setCustomer(customer); // Set the customer on the address
+        customer.getRemark().add(remarkModel); // Add the new address to the customer's addresses
+
+        RemarkModel remark = remarkRepository.save(remarkModel);
+        return remark;
+    }
+
+    // Select Order Detail
+    public Page<OrderDetailDTO> getAllOrderDetail(Pageable pageable) {
+        Page<OrderDetailModel> orderDetail = orderDetailRepository.findAll(pageable);
+        List<OrderDetailDTO> orderDetailDTO = orderDetail.stream()
+                .map(OrderDetailMapper::convertOrderDetailToDTO)
+                .collect(Collectors.toList());
+        return new PageImpl<>(orderDetailDTO, pageable, orderDetail.getTotalElements());
     }
 }

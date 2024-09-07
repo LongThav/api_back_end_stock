@@ -14,7 +14,6 @@ public class AddressModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "address_id")
     private Long addressId;
-    
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
@@ -81,9 +80,9 @@ public class AddressModel {
         this.addressId = addressId;
     }
 
-    public CustomerModel getCustomer() {
-    return customer;
-    }
+    // public CustomerModel getCustomer() {
+    //     return customer;
+    // }
 
     public void setCustomer(CustomerModel customer) {
         this.customer = customer;

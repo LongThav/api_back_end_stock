@@ -1,4 +1,4 @@
-package com.learn.api.controllers;
+package com.learn.api.controllers.AuthController;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

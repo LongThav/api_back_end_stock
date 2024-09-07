@@ -74,6 +74,11 @@ public class CustomerModel {
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<ReportModel> reportModels;
 
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private Set<RemarkModel> remarkModels;
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private Set<OrderDetailModel> orderDetailModels;
 
     // Getters and Setters
     public Long getCustomerId() {
@@ -178,5 +183,21 @@ public class CustomerModel {
 
     public void setReport(Set<ReportModel> reportModels) {
         this.reportModels = reportModels;
+    }
+
+    public Set<RemarkModel> getRemark() {
+        return remarkModels;
+    }
+
+    public void setRemark(Set<RemarkModel> remarkModels) {
+        this.remarkModels = remarkModels;
+    }
+
+    public Set<OrderDetailModel> getOrderDetail() {
+        return orderDetailModels;
+    }
+
+    public void setOrderDetail(Set<OrderDetailModel> orderDetailModels) {
+        this.orderDetailModels = orderDetailModels;
     }
 }

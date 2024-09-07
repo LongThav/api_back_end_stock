@@ -1,4 +1,4 @@
-package com.learn.api.controllers;
+package com.learn.api.controllers.SaleController;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,10 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.learn.api.dto.ResponseWrapper;
 import com.learn.api.dto.AuthDto.AuthRespone;
 import com.learn.api.dto.SaleDTO.CustomerDTO;
+import com.learn.api.dto.SaleDTO.OrderDetailDTO;
+import com.learn.api.dto.SaleDTO.RemarkDTO;
 import com.learn.api.dto.SaleDTO.ReportDTO;
 import com.learn.api.models.SaleModel.AddressModel;
 import com.learn.api.models.SaleModel.ContactPersonModel;
 import com.learn.api.models.SaleModel.CustomerModel;
+import com.learn.api.models.SaleModel.RemarkModel;
 import com.learn.api.models.SaleModel.ReportModel;
 import com.learn.api.service.SaleService.CustomerService;
 
@@ -229,4 +232,73 @@ public class SaleController {
 
         return ResponseEntity.ok(new ResponseWrapper<>(200, "Report added successfully", reportDTO));
     }
+
+    @GetMapping("/remark")
+    public ResponseEntity<?> getAllRemark(
+            HttpServletRequest httpRequest,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        // Check if the token is missing
+        if (isTokenMissing(httpRequest)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthRespone(false, "User not authorized"));
+        }
+        // Create a Pageable object
+        Pageable pageable = PageRequest.of(page, size);
+        // Retrieve a paginated list of items
+        Page<RemarkDTO> report = customerService.getAllRemark(pageable);
+        // Check if there are no items on the requested page
+        if (report.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseWrapper<>(404, "No report found", report));
+        }
+        // Return the paginated response
+        return ResponseEntity.ok(new ResponseWrapper<>(200, "Response report successfully", report));
+    }
+
+    @PostMapping("/customer/{customerId}/add-remark")
+    public ResponseEntity<?> addRemarkToCustomer(
+            @PathVariable(value = "customerId") Long customerId,
+            @Valid @RequestBody RemarkModel remarkModel) {
+
+        // Add the report to the customer
+        RemarkModel remakr = customerService.addRemarkToCustomer(customerId, remarkModel);
+
+        if (remakr == null) {
+            return ResponseEntity.badRequest().body(new ResponseWrapper<>(400, "Customer not found", null));
+        }
+
+        // Map the RemarkModel to RemarkDTO
+        RemarkDTO remark = new RemarkDTO();
+        remark.setCustomerId(customerId);
+        remark.setRemark(remakr.getRemark()); // Set the remark from the saved report
+        remark.setRemarkId(remakr.getRemarkId()); // Set the remarkId from the saved report
+
+        return ResponseEntity.ok(new ResponseWrapper<>(200, "Remark added successfully", remark));
+    }
+
+    // get order detail
+    @GetMapping("/order-detail")
+    public ResponseEntity<?> getOrderDetail(
+            HttpServletRequest httpRequest,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        // Check if the token is missing
+        if (isTokenMissing(httpRequest)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthRespone(false, "User not authorized"));
+        }
+        // Create a Pageable object
+        Pageable pageable = PageRequest.of(page, size);
+        // Retrieve a paginated list of items
+        Page<OrderDetailDTO> orderDetailDTO = customerService.getAllOrderDetail(pageable);
+        // Check if there are no items on the requested page
+        if (orderDetailDTO.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseWrapper<>(404, "No report found", orderDetailDTO));
+        }
+        // Return the paginated response
+        return ResponseEntity.ok(new ResponseWrapper<>(200, "Response order detail successfully", orderDetailDTO));
+    }
+
 }
