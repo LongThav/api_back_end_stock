@@ -25,4 +25,6 @@ public class InvoiceMapper {
         return invoice.getTotalAmount().subtract(invoice.getAmount());
     }
 
+    
+
 }

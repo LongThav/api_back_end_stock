@@ -8,7 +8,7 @@ public class InvoiceCustomerDTO {
     private Long invoiceId;
     private Date date;
     private String retainerInvoice;
-    private String reference;
+    private String referenceNumber;
 
     private String customerName;
     private Long customerId;
@@ -34,11 +34,11 @@ public class InvoiceCustomerDTO {
     }
 
     public String getReference() {
-        return reference;
+        return referenceNumber;
     }
 
     public void setReference(String reference) {
-        this.reference = reference;
+        this.referenceNumber = reference;
     }
 
     public String getStatus() {

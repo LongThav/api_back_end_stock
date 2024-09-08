@@ -11,6 +11,10 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -31,61 +35,84 @@ public class InvoiceModel {
     @JoinColumn(name = "customer_id", nullable = false)
     private CustomerModel customer;
 
+    @NotBlank(message = "Currency is required")
+    @Size(max = 3, message = "Currency must be 3 characters long")
     @Column(name = "currency", nullable = false, length = 3)
     private String currency;
 
+    @NotBlank(message = "Billing address is required")
     @Column(name = "billing_address", nullable = false)
     private String billingAddress;
 
+    @NotBlank(message = "Billing city is required")
     @Column(name = "billing_city", nullable = false)
     private String billingCity;
 
+    @NotBlank(message = "Billing state is required")
     @Column(name = "billing_state", nullable = false)
     private String billingState;
 
+    @NotBlank(message = "Billing zip code is required")
     @Column(name = "billing_zip_code", nullable = false)
     private String billingZipCode;
 
+    @NotBlank(message = "Billing country is required")
     @Column(name = "billing_country", nullable = false)
     private String billingCountry;
 
+    @NotBlank(message = "Billing phone is required")
     @Column(name = "billing_phone", nullable = false)
     private String billingPhone;
 
     @Column(name = "billing_fax")
     private String billingFax;
 
+    @NotBlank(message = "Retainer invoice number is required")
     @Column(name = "retainer_invoice_number", nullable = false)
     private String retainerInvoiceNumber;
 
     @Column(name = "reference_number")
-    private String referenc;
+    private String referenceNumber;
 
+    @NotNull(message = "Retainer invoice date is required")
     @Column(name = "retainer_invoice_date", nullable = false)
     @Temporal(TemporalType.DATE)
     private Date retainerInvoiceDate;
 
+    @Size(max = 500, message = "Description can be up to 500 characters long")
     @Column(name = "description", length = 500)
     private String description;
 
+    @NotNull(message = "Tax is required")
+    @DecimalMin(value = "0.00", message = "Tax cannot be negative")
     @Column(name = "tax", nullable = false)
     private BigDecimal tax = BigDecimal.ZERO;
 
+    @NotNull(message = "Amount is required")
+    @DecimalMin(value = "0.00", message = "Amount cannot be negative")
     @Column(name = "amount", nullable = false)
     private BigDecimal amount = BigDecimal.ZERO;
 
+    @Size(max = 500, message = "Customer notes can be up to 500 characters long")
     @Column(name = "customer_notes", length = 500)
     private String customerNotes;
 
+    @NotNull(message = "Sub total is required")
+    @DecimalMin(value = "0.00", message = "Sub total cannot be negative")
     @Column(name = "sub_total", nullable = false)
     private BigDecimal subTotal = BigDecimal.ZERO;
 
+    @NotNull(message = "Round off is required")
+    @DecimalMin(value = "0.00", message = "Round off cannot be negative")
     @Column(name = "round_off", nullable = false)
     private BigDecimal roundOff = BigDecimal.ZERO;
 
+    @NotNull(message = "Total amount is required")
+    @DecimalMin(value = "0.00", message = "Total amount cannot be negative")
     @Column(name = "total_amount", nullable = false)
     private BigDecimal totalAmount = BigDecimal.ZERO;
 
+    @Size(max = 1000, message = "Terms and conditions can be up to 1000 characters long")
     @Column(name = "terms_conditions", length = 1000)
     private String termsConditions;
 
@@ -182,11 +209,11 @@ public class InvoiceModel {
     }
 
     public String getReferenc() {
-        return referenc;
+        return referenceNumber;
     }
 
     public void setReferenc(String referenc) {
-        this.referenc = referenc;
+        this.referenceNumber = referenc;
     }
 
     public Date getRetainerInvoiceDate() {
