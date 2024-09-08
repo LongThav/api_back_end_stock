@@ -76,7 +76,6 @@ public class InvoiceController {
             @PathVariable(value = "customerId") Long customerId,
             @Valid @RequestBody InvoiceModel invoiceModel) {
         try {
-
             // Add the report to the customer
             InvoiceModel invoice = invoiceService.addInvoice(customerId, invoiceModel);
 
