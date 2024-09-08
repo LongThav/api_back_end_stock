@@ -11,13 +11,18 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 @Table(name = "tbl_customer")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class CustomerModel {
 
     @Id
@@ -79,6 +84,10 @@ public class CustomerModel {
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<OrderDetailModel> orderDetailModels;
+
+     @OneToMany(mappedBy = "customer")
+    @JsonBackReference
+    private List<InvoiceModel> invoices;
 
     // Getters and Setters
     public Long getCustomerId() {
