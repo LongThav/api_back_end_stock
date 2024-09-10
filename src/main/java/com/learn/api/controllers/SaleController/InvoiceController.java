@@ -23,11 +23,14 @@ import com.learn.api.config.DuplicateInvoiceNumberException;
 import com.learn.api.dto.ResponseWrapper;
 import com.learn.api.dto.AuthDto.AuthRespone;
 import com.learn.api.dto.SaleDTO.AddInvoiceResponseDTO;
+import com.learn.api.dto.SaleDTO.AddRetainerInvoiceDTO;
 import com.learn.api.dto.SaleDTO.InvoiceCustomerDTO;
+import com.learn.api.dto.SaleDTO.RetainerInvoiceDTO;
 import com.learn.api.models.SaleModel.InvoiceModel;
-
+import com.learn.api.models.SaleModel.RetainerInvoiceModel;
 import com.learn.api.service.SaleService.InvoiceService.InvoiceService;
 import com.learn.api.utility.Mapper.SaleMapper.AddInvoiceResponse;
+import com.learn.api.utility.Mapper.SaleMapper.AddRetainerInvoiceMapp;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -86,6 +89,58 @@ public class InvoiceController {
             AddInvoiceResponseDTO invoiceCustomerDTO = AddInvoiceResponse.toDTO(invoice);
 
             return ResponseEntity.ok(new ResponseWrapper<>(200, "Remark added successfully", invoiceCustomerDTO));
+        } catch (DuplicateInvoiceNumberException ex) {
+            Map<String, String> errors = new HashMap<>();
+            errors.put("retainer_invoice_number", ex.getMessage());
+            return ResponseEntity.ok(new ResponseWrapper<>(500, "An unexpected error occurred", errors));
+        } catch (RuntimeException ex) {
+            Map<String, String> errors = new HashMap<>();
+            System.out.println("Another");
+            errors.put("general", ex.getMessage());
+            return ResponseEntity.ok(new ResponseWrapper<>(500, "An unexpected error occurred", errors));
+        }
+    }
+
+    @GetMapping("/retainer/invoice")
+    public ResponseEntity<?> getAllRetainerInvoice(
+            HttpServletRequest httpRequest,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        // Check if the token is missing
+        if (isTokenMissing(httpRequest)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthRespone(false, "User not authorized"));
+        }
+        // Create a Pageable object
+        Pageable pageable = PageRequest.of(page, size);
+        // Retrieve a paginated list of items
+
+        // Retrieve a paginated list of CustomerDTO
+        Page<RetainerInvoiceDTO> invoice = invoiceService.getRetainerInvoice(pageable);
+        // Check if there are no items on the requested page
+        if (invoice.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseWrapper<>(404, "No retainer invoice found", invoice));
+        }
+        // Return the paginated response
+        return ResponseEntity.ok(new ResponseWrapper<>(200, "Response retainer invoice successfully", invoice));
+    }
+
+    @PostMapping("/customer/{customerId}/add-retainer-invoice")
+    public ResponseEntity<?> addRetainerInvoice(
+            @PathVariable(value = "customerId") Long customerId,
+            @Valid @RequestBody RetainerInvoiceModel retainerInvoiceModel) {
+        try {
+            // Add the report to the customer
+            RetainerInvoiceModel invoice = invoiceService.addRetainerInvoice(customerId, retainerInvoiceModel);
+
+            if (invoice == null) {
+                return ResponseEntity.badRequest().body(new ResponseWrapper<>(400, "Customer not found", null));
+            }
+
+            AddRetainerInvoiceDTO addRetainerInvoiceDTO = AddRetainerInvoiceMapp.toDTO(invoice);
+
+            return ResponseEntity.ok(new ResponseWrapper<>(200, "Retainer invoice added successfully", addRetainerInvoiceDTO));
         } catch (DuplicateInvoiceNumberException ex) {
             Map<String, String> errors = new HashMap<>();
             errors.put("retainer_invoice_number", ex.getMessage());

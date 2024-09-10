@@ -85,9 +85,12 @@ public class CustomerModel {
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<OrderDetailModel> orderDetailModels;
 
-     @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customer")
     @JsonBackReference
     private List<InvoiceModel> invoices;
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private Set<RetainerInvoiceModel> retainerInvoiceModels;
 
     // Getters and Setters
     public Long getCustomerId() {
@@ -208,5 +211,13 @@ public class CustomerModel {
 
     public void setOrderDetail(Set<OrderDetailModel> orderDetailModels) {
         this.orderDetailModels = orderDetailModels;
+    }
+
+    public Set<RetainerInvoiceModel> getRetainerInvoice() {
+        return retainerInvoiceModels;
+    }
+
+    public void setRetainerInvoice(Set<RetainerInvoiceModel> retainerInvoiceModels) {
+        this.retainerInvoiceModels = retainerInvoiceModels;
     }
 }

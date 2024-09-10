@@ -80,9 +80,9 @@ public class AddressModel {
         this.addressId = addressId;
     }
 
-    // public CustomerModel getCustomer() {
-    //     return customer;
-    // }
+    public CustomerModel getCustomer() {
+        return customer;
+    }
 
     public void setCustomer(CustomerModel customer) {
         this.customer = customer;
