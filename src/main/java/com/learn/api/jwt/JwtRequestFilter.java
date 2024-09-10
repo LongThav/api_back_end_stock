@@ -27,11 +27,17 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private CustomUserDetailsService userDetailsService;
 
     @Override
-    protected void doFilterInternal(@SuppressWarnings("null") HttpServletRequest request, @SuppressWarnings("null") HttpServletResponse response, @SuppressWarnings("null") FilterChain filterChain)
+    protected void doFilterInternal(@SuppressWarnings("null") HttpServletRequest request,
+            @SuppressWarnings("null") HttpServletResponse response, @SuppressWarnings("null") FilterChain filterChain)
             throws ServletException, IOException {
         final String authorizationHeader = request.getHeader("Authorization");
         String username = null;
         String jwtToken = null;
+
+        if (request.getRequestURI().startsWith("/api/auth")) {
+            filterChain.doFilter(request, response);
+            return; // Skip the rest of the filter logic
+        }
 
         // Check if the Authorization header exists and starts with "Bearer "
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
@@ -42,11 +48,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 e.printStackTrace();
                 throw new UnauthorizedAccessException("User not authorized");
             }
-        }else{
-            // throw new UnauthorizedAccessException("User not authorized");    
-            if (!request.getRequestURI().startsWith("/api/auth")) {
-                throw new UnauthorizedAccessException("User not authorized");
-            }
+        } else {
+            throw new UnauthorizedAccessException("User not authorized");
         }
 
         // If we have a username and the SecurityContext is not populated
@@ -54,8 +57,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             if (jwtUtil.validateToken(jwtToken, username)) {
                 // Set the authentication in the SecurityContext
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }

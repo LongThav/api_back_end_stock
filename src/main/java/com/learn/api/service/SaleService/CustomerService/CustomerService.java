@@ -1,4 +1,4 @@
-package com.learn.api.service.SaleService;
+package com.learn.api.service.SaleService.CustomerService;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -19,7 +19,7 @@ import com.learn.api.models.SaleModel.ContactPersonModel;
 import com.learn.api.models.SaleModel.CustomerModel;
 import com.learn.api.models.SaleModel.RemarkModel;
 import com.learn.api.models.SaleModel.ReportModel;
-import com.learn.api.service.SaleService.CustomerService;
+import com.learn.api.service.SaleService.CustomerService.CustomerService;
 
 // import org.slf4j.Logger;
 // import org.slf4j.LoggerFactory;

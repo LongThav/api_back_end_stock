@@ -15,8 +15,6 @@ public class ContactPersonModel {
     @Column(name = "contact_person_id")
     private Integer contactPersonId;
 
-    
-   
     @NotNull(message = "Customer id is required")
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
