@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
+
 @ComponentScan(basePackages = "com.learn.api")
 public class ApiApplication {
 
@@ -13,3 +14,7 @@ public class ApiApplication {
 	}
 
 }
+
+//swagger
+//http://localhost:8080/context-path/swagger-ui.html
+//localhost:8080/swagger-ui.html

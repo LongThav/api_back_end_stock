@@ -34,7 +34,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String username = null;
         String jwtToken = null;
 
-        if (request.getRequestURI().startsWith("/api/auth")) {
+        if (request.getRequestURI().startsWith("/api/auth") || request.getRequestURI().startsWith("/v3/api-docs") ||
+                request.getRequestURI().startsWith("/swagger-ui.html") ||
+                request.getRequestURI().startsWith("/swagger-ui") ||
+                request.getRequestURI().startsWith("/webjars")) {
             filterChain.doFilter(request, response);
             return; // Skip the rest of the filter logic
         }

@@ -33,29 +33,33 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/api/auth/login", "/api/auth/register").permitAll() // Allow public access to login and register endpoints
-                .requestMatchers("/api/items").permitAll() 
-                // .requestMatchers("/api/items").authenticated()
-                .anyRequest().authenticated() // Protect all other endpoints
-            )
-            .formLogin(form -> form
-                .loginProcessingUrl("/api/auth/login")
-                .disable() // Disable default form login
-            )
-            .logout(logout -> logout
-                .permitAll() // Allow public access to logout
-            )
-            .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class) // Add JWT filter before default filter
-            .exceptionHandling(exceptionHandling -> 
-                exceptionHandling
-                    .authenticationEntryPoint((request, response, authException) -> {
-                        response.setStatus(HttpServletResponse.SC_FORBIDDEN); // Set status to 403
-                        response.setContentType("application/json");
-                        response.getWriter().write("{\"status_code\": 403, \"status\": false, \"message\": \"User not authorized\"}");
-                    })
-            );
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**", "/webjars/**")
+                        .permitAll()
+                        .requestMatchers("/api/auth/login", "/api/auth/register").permitAll() // Allow public access to
+                                                                                              // login and register
+                                                                                              // endpoints
+                        .requestMatchers("/api/items").permitAll()
+                        // .requestMatchers("/api/items").authenticated()
+                        .anyRequest().authenticated() // Protect all other endpoints
+                )
+                .formLogin(form -> form
+                        .loginProcessingUrl("/api/auth/login")
+                        .disable() // Disable default form login
+                )
+                .logout(logout -> logout
+                        .permitAll() // Allow public access to logout
+                )
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class) // Add JWT filter before
+                                                                                               // default filter
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN); // Set status to 403
+                            response.setContentType("application/json");
+                            response.getWriter().write(
+                                    "{\"status_code\": 403, \"status\": false, \"message\": \"User not authorized\"}");
+                        }));
 
         return http.build();
     }
