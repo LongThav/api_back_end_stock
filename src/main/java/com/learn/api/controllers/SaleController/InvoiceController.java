@@ -74,13 +74,14 @@ public class InvoiceController {
         return ResponseEntity.ok(new ResponseWrapper<>(200, "Response invoice successfully", invoice));
     }
 
-    @PostMapping("/customer/{customerId}/add-invoice")
+    @PostMapping("/customer/{customerId}/add-invoice/item/{item_id}")
     public ResponseEntity<?> addRemarkToCustomer(
             @PathVariable(value = "customerId") Long customerId,
+            @PathVariable(value = "item_id") Long item_id,
             @Valid @RequestBody InvoiceModel invoiceModel) {
         try {
             // Add the report to the customer
-            InvoiceModel invoice = invoiceService.addInvoice(customerId, invoiceModel);
+            InvoiceModel invoice = invoiceService.addInvoice(customerId, item_id, invoiceModel);
 
             if (invoice == null) {
                 return ResponseEntity.badRequest().body(new ResponseWrapper<>(400, "Customer not found", null));

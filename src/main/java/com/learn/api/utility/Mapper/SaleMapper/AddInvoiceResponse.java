@@ -8,6 +8,7 @@ public class AddInvoiceResponse {
     public static AddInvoiceResponseDTO toDTO(InvoiceModel invoice) {
         AddInvoiceResponseDTO dto = new AddInvoiceResponseDTO();
         dto.setCurrency(invoice.getCurrency());
+        dto.setItemId(invoice.getItemInventory().getItemID());
         dto.setBillingAddress(invoice.getBillingAddress());
         dto.setBillingCity(invoice.getBillingCity());
         dto.setBillingState(invoice.getBillingState());

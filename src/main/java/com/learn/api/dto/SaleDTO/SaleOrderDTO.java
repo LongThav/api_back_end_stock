@@ -6,6 +6,7 @@ import java.sql.Date;
 public class SaleOrderDTO {
     private Long id;
     private Date salesOrderDate;
+    private Long customerId;
     private String salesOrderNumber;
     private String referenceNumber;
     private String customerName;
@@ -38,6 +39,14 @@ public class SaleOrderDTO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 
     public String getReferenceNumber() {

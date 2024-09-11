@@ -14,9 +14,11 @@ import com.learn.api.config.DuplicateInvoiceNumberException;
 import com.learn.api.constants.Enum.SaleEnum.InvoiceStatueEnum;
 import com.learn.api.dto.SaleDTO.InvoiceCustomerDTO;
 import com.learn.api.dto.SaleDTO.RetainerInvoiceDTO;
+import com.learn.api.models.InventoryModel.ItemModel;
 import com.learn.api.models.SaleModel.CustomerModel;
 import com.learn.api.models.SaleModel.InvoiceModel;
 import com.learn.api.models.SaleModel.RetainerInvoiceModel;
+import com.learn.api.repositorys.InventoryRepository.ItemRepository;
 import com.learn.api.repositorys.SaleRepository.CustomerRepository;
 import com.learn.api.repositorys.SaleRepository.InvoiceRepository;
 import com.learn.api.repositorys.SaleRepository.RetainerInvoiceRepository;
@@ -38,6 +40,9 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Autowired
     private RetainerInvoiceRepository retainerInvoiceRepository;
 
+    @Autowired
+    private ItemRepository itemRepository;
+
     @Override
     public Page<InvoiceCustomerDTO> getInvoice(Pageable pageable) {
         Page<InvoiceModel> invoiceModel = invoiceRepository.findAll(pageable);
@@ -52,7 +57,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     // add invoice
     @Override
     @Transactional
-    public InvoiceModel addInvoice(Long customerId, InvoiceModel invoiceModel) {
+    public InvoiceModel addInvoice(Long customerId, Long itemId, InvoiceModel invoiceModel) {
         // Check if the retainer_invoice_number already exists
         Optional<InvoiceModel> existingInvoice = invoiceRepository
                 .findByRetainerInvoiceNumber(invoiceModel.getRetainerInvoiceNumber());
@@ -60,11 +65,19 @@ public class InvoiceServiceImpl implements InvoiceService {
             throw new DuplicateInvoiceNumberException("The retainer_invoice_number is already in use.");
         }
 
+        // item
+        ItemModel item = itemRepository.findById(itemId)
+                .orElseThrow(
+                        () -> new RuntimeException(
+                                "Item not found with id: " + invoiceModel.getItemInventory().getItemID()));
+        invoiceModel.setItemInvenotory(item);
+
         // Proceed with saving the new invoice
         CustomerModel customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new RuntimeException("Customer not found with id: " + customerId));
 
         invoiceModel.setCustomer(customer);
+        invoiceModel.setItemInvenotory(item);
         invoiceModel.setStatus(InvoiceStatueEnum.Pending.toString()); // Ensure this value is valid
 
         return invoiceRepository.save(invoiceModel);
@@ -85,7 +98,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Transactional
     public RetainerInvoiceModel addRetainerInvoice(Long customerId, RetainerInvoiceModel retainerInvoiceModel) {
         // Check if the retainer_invoice_number already exists
-        Optional<RetainerInvoiceModel> existingRetainerInvoice = retainerInvoiceRepository.findByRetainerInvoiceNumber(retainerInvoiceModel.getRetainerInvoiceNumber());
+        Optional<RetainerInvoiceModel> existingRetainerInvoice = retainerInvoiceRepository
+                .findByRetainerInvoiceNumber(retainerInvoiceModel.getRetainerInvoiceNumber());
         if (existingRetainerInvoice.isPresent()) {
             throw new DuplicateInvoiceNumberException("The retainer_invoice_number is already in use.");
         }

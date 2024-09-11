@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.sql.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.learn.api.models.InventoryModel.ItemModel;
 
 @Entity
 @Table(name = "tbl_invoice")
@@ -29,6 +30,12 @@ public class InvoiceModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "invoice_id")
     private Long invoiceId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+    // @NotBlank(message = "Item_id inventory is required")
+    @JoinColumn(name = "item_id", nullable = false)
+    private ItemModel item_id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
@@ -118,6 +125,8 @@ public class InvoiceModel {
 
     @Column(name = "status", nullable = false)
     private String status;
+
+
 
     // Getters and Setters
     public Long geInvoicetId() {
@@ -294,5 +303,13 @@ public class InvoiceModel {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public void setItemInvenotory(ItemModel itemModel){
+        this.item_id = itemModel;
+    }
+
+    public ItemModel getItemInventory(){
+        return item_id;
     }
 }

@@ -5,9 +5,9 @@ import java.sql.Date;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.learn.api.models.InventoryModel.ItemModel;
 
 import jakarta.persistence.*;
-// import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
@@ -23,6 +23,12 @@ public class SaleOrderModel {
 
     @Column(name = "reference_number", length = 50)
     private String referenceNumber;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+    // @NotNull(message = "item_id inventory is required")
+    @JoinColumn(name = "item_id", nullable = false)
+    private ItemModel item_id;
 
     @NotNull(message = "sales_order_date is required")
     @Column(name = "sales_order_date", nullable = false)
@@ -262,6 +268,14 @@ public class SaleOrderModel {
 
     public String getCurrency() {
         return currency;
+    }
+
+    public void setItemInvenotory(ItemModel itemModel) {
+        this.item_id = itemModel;
+    }
+
+    public ItemModel getItemInventory() {
+        return item_id;
     }
 
 }

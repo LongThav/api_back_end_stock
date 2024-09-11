@@ -8,6 +8,7 @@ public class AddInvoiceResponseDTO {
     private String billingAddress;
     private String billingCity;
     private String billingState;
+    private Long item_id;
     private String billingZipCode;
     private String billingCountry;
     private String billingPhone;
@@ -176,5 +177,14 @@ public class AddInvoiceResponseDTO {
 
     public void setTermsConditions(String termsConditions) {
         this.termsConditions = termsConditions;
+    }
+
+
+    public Long getItemId() {
+        return item_id;
+    }
+
+    public void setItemId(Long itemId) {
+        this.item_id = itemId;
     }
 }

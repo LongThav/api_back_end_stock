@@ -70,13 +70,14 @@ public class SaleOrderController {
         return ResponseEntity.ok(new ResponseWrapper<>(200, "Response sale order successfully", saleOrderDTO));
     }
 
-    @PostMapping("/customer/{customerId}/add/sale-order")
+    @PostMapping("/customer/{customerId}/add/sale-order/item/{item_id}")
     public ResponseEntity<?> addSaleOrder(
             @PathVariable(value = "customerId") Long customerId,
+            @PathVariable(value = "item_id") Long item_id,
             @Valid @RequestBody SaleOrderModel saleOrderModel) {
         try {
             // Add the report to the customer
-            SaleOrderModel sale = saleOrderService.addSaleOrder(customerId, saleOrderModel);
+            SaleOrderModel sale = saleOrderService.addSaleOrder(customerId, item_id, saleOrderModel);
 
             if (sale == null) {
                 return ResponseEntity.badRequest().body(new ResponseWrapper<>(400, "Customer not found", null));

@@ -17,6 +17,7 @@ public class SaleOrderMapper {
         dto.setReferenceNumber(saleOrderModel.getReferenceNumber());
         dto.setCustomerName(
                 saleOrderModel.getCustomer().getFirstName() + " " + saleOrderModel.getCustomer().getLastName());
+        dto.setCustomerId(saleOrderModel.getCustomer().getCustomerId());
         dto.setStatus(saleOrderModel.getStatus());
         dto.setAmount(saleOrderModel.getTotalAmount());
         dto.setCurrency(saleOrderModel.getCurrency());
@@ -34,6 +35,7 @@ public class SaleOrderMapper {
 
         dto.setId(saleOrderModel.getId()); // Corrected
         dto.setCustomerId(saleOrderModel.getCustomer().getCustomerId()); // Corrected
+        dto.setItemId(saleOrderModel.getItemInventory().getItemID());
         dto.setSalesOrderNumber(saleOrderModel.getSalesOrderNumber()); // Corrected
         dto.setReferenceNumber(saleOrderModel.getReferenceNumber()); // Corrected
         dto.setSalesOrderDate(saleOrderModel.getSalesOrderDate()); // Corrected

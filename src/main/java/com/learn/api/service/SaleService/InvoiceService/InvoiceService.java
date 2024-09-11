@@ -14,7 +14,7 @@ public interface InvoiceService {
 
     Page<RetainerInvoiceDTO> getRetainerInvoice(Pageable pageable);
 
-    InvoiceModel addInvoice(Long customerId, InvoiceModel invoiceModel);
+    InvoiceModel addInvoice(Long customerId, Long itemId, InvoiceModel invoiceModel);
     
     RetainerInvoiceModel addRetainerInvoice(Long customerId, RetainerInvoiceModel retainerInvoiceModel);
 }

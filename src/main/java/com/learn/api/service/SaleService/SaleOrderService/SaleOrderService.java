@@ -10,5 +10,7 @@ public interface SaleOrderService {
 
     Page<SaleOrderDTO> getSaleOrder(Pageable pageable);
 
-    SaleOrderModel addSaleOrder(Long customerId, SaleOrderModel saleOrderModel);
+    SaleOrderModel addSaleOrder(Long customerId,  Long itemId ,SaleOrderModel saleOrderModel);
 }
+
+// https://chatgpt.com/c/66e050db-6860-8006-bcc1-fdf18d31d77c
