@@ -15,7 +15,7 @@ import jakarta.validation.constraints.NotNull;
 public class SaleOrderModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long sale_order_id;
 
     @NotNull(message = "sales_order_number is required")
     @Column(name = "sales_order_number", nullable = false, unique = true, length = 50)
@@ -111,11 +111,11 @@ public class SaleOrderModel {
 
     // Getters and Setters
     public Long getId() {
-        return id;
+        return sale_order_id;
     }
 
     public void setId(Long id) {
-        this.id = id;
+        this.sale_order_id = id;
     }
 
     public String getSalesOrderNumber() {
